@@ -32,7 +32,10 @@ export class DepositUseCase {
     return this.accountRepository
       .update(AccountMapper.toEntity(account))
       .catch((err) => {
-        throw new ServerError('There was an error creating an account', err);
+        throw new ServerError(
+          'There was an error on update balance of account',
+          err,
+        );
       });
   }
 

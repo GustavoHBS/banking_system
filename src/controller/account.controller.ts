@@ -5,6 +5,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Put,
   Query,
   Res,
 } from '@nestjs/common';
@@ -61,6 +62,20 @@ export class AccountController {
   @ApiQuery({
     name: 'accountId',
     type: Number,
+  })
+  async getBalance(
+    @Query('accountId') accountId: string,
+    @Res() response: Response,
+  ) {
+    const balance = await this.getAccountBalanceUseCase.execute(accountId);
+    return response.status(HttpStatus.OK).send({
+      balance,
+    });
+  }
+
+  @Put('/transfer')
+  @ApiBody({
+    type: TransferDTO,
   })
   async getBalance(
     @Query('accountId') accountId: string,

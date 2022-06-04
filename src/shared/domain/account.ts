@@ -2,7 +2,7 @@ import { Decimal } from '@prisma/client/runtime';
 import { Cpf } from './cpf';
 import { Email } from './email';
 import { Entity } from './entity';
-import { InvalidParams } from './invalidParams';
+import { InvalidParam } from './invalidParam';
 import { Password } from './password';
 
 interface IAccountProps {
@@ -27,11 +27,11 @@ export class Account extends Entity<IAccountProps> {
     const email = Email.create(account.email);
     const cpf = Cpf.create(account.cpf);
     const password = Password.create(account.password);
-    if (email instanceof InvalidParams) {
-      throw new InvalidParams('email');
+    if (email instanceof InvalidParam) {
+      throw new InvalidParam('email');
     }
-    if (cpf instanceof InvalidParams) {
-      throw new InvalidParams('cpf');
+    if (cpf instanceof InvalidParam) {
+      throw new InvalidParam('cpf');
     }
     account.email = email.getValue();
     account.cpf = cpf.getValue();
@@ -65,8 +65,19 @@ export class Account extends Entity<IAccountProps> {
 
   addBalance(value: number) {
     if (value <= 0) {
-      return new InvalidParams('balance');
+      return new InvalidParam('balance');
     }
     this.props.balance = this.props.balance.add(value);
+  }
+
+  subBalance(value: number) {
+    if (value <= 0) {
+      return new InvalidParam('balance');
+    }
+    if (this.balance.lessThan(value)) {
+      return false;
+    }
+    this.props.balance.sub(value);
+    return true;
   }
 }

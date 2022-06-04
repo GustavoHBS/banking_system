@@ -1,5 +1,5 @@
 import { EncryptService } from 'src/service/encrypt.service';
-import { InvalidParams } from './invalidParams';
+import { InvalidParam } from './invalidParams';
 
 export class Password {
   private password: string;

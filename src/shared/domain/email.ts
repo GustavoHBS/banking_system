@@ -1,4 +1,4 @@
-import { InvalidParams } from './invalidParams';
+import { InvalidParam } from './invalidParams';
 
 export class Email {
   private email: string;
@@ -7,9 +7,9 @@ export class Email {
     this.email = email;
   }
 
-  static create(email: string): Email | InvalidParams {
+  static create(email: string): Email | InvalidParam {
     if (!email.includes('@')) {
-      return new InvalidParams('email');
+      return new InvalidParam('email');
     }
     return new Email(email);
   }

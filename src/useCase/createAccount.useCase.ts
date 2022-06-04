@@ -3,7 +3,7 @@ import { Account } from 'src/shared/domain/account';
 import { AccountRepository } from 'src/repository/account.repository';
 import { IUserData } from 'src/shared/interface/userData.interface';
 import { ServerError } from 'src/shared/domain/serverError';
-import { InvalidParams } from 'src/shared/domain/invalidParams';
+import { InvalidParam } from 'src/shared/domain/invalidParams';
 import { CustomHttpError } from 'src/shared/domain/error';
 import { AccountMapper } from 'src/shared/mapper/account.mapper';
 
@@ -13,7 +13,7 @@ export class CreateAccountUseCase {
 
   async execute(userData: IUserData): Promise<number | CustomHttpError> {
     const account = Account.create(userData);
-    if (account instanceof InvalidParams) {
+    if (account instanceof InvalidParam) {
       return account;
     }
     return this.accountRepository
