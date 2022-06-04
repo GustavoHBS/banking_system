@@ -5,19 +5,20 @@ import { IUserData } from 'src/shared/interface/userData.interface';
 import { ServerError } from 'src/shared/domain/serverError';
 import { InvalidParams } from 'src/shared/domain/invalidParams';
 import { CustomHttpError } from 'src/shared/domain/error';
+import { AccountMapper } from 'src/shared/mapper/account.mapper';
 
 @Injectable()
 export class CreateAccountUseCase {
   constructor(private accountRepository: AccountRepository) {}
 
-  async execute(userData: IUserData): Promise<boolean | CustomHttpError> {
+  async execute(userData: IUserData): Promise<number | CustomHttpError> {
     const account = Account.create(userData);
     if (account instanceof InvalidParams) {
       return account;
     }
     return this.accountRepository
-      .create(account)
-      .then(() => true)
+      .create(AccountMapper.toEntity(account))
+      .then((account) => account.id)
       .catch((err) => {
         console.log(err);
         return new ServerError('There was an error creating an account', err);

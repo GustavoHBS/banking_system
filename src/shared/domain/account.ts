@@ -1,48 +1,72 @@
+import { Decimal } from '@prisma/client/runtime';
 import { Cpf } from './cpf';
 import { Email } from './email';
+import { Entity } from './entity';
 import { InvalidParams } from './invalidParams';
 import { Password } from './password';
 
-interface AccountProps {
+interface IAccountProps {
   id?: number;
   email: string;
   name: string;
   password: string;
   cpf: string;
-  balance?: number;
+  balance?: Decimal;
 }
 
-export class Account {
-  public readonly id: number;
-  public readonly email: string;
-  public readonly name: string;
-  public readonly password: string;
-  public readonly cpf: string;
-  public readonly balance: number;
-
-  private constructor(props: AccountProps) {
-    this.id = props.id;
-    this.email = props.email;
-    this.name = props.name;
-    this.password = props.password;
-    this.cpf = props.cpf;
-    this.balance = props.balance;
+export class Account extends Entity<IAccountProps> {
+  private constructor(props: IAccountProps) {
+    super(props);
   }
 
-  static create(props: AccountProps): Account | InvalidParams {
-    const account = structuredClone(props);
-    const email = Email.create(props.email);
-    const cpf = Cpf.create(props.cpf);
-    const password = Password.create(props.password);
+  static create(account: IAccountProps): Account {
+    //const account = structuredClone(props);
+    if (account.id) {
+      return new Account(account);
+    }
+    const email = Email.create(account.email);
+    const cpf = Cpf.create(account.cpf);
+    const password = Password.create(account.password);
     if (email instanceof InvalidParams) {
-      return email;
+      throw new InvalidParams('email');
     }
     if (cpf instanceof InvalidParams) {
-      return cpf;
+      throw new InvalidParams('cpf');
     }
     account.email = email.getValue();
     account.cpf = cpf.getValue();
     account.password = password.getValue();
     return new Account(account);
+  }
+
+  public get id(): number {
+    return this.props.id;
+  }
+
+  public get email(): string {
+    return this.props.email;
+  }
+
+  public get name(): string {
+    return this.props.name;
+  }
+
+  public get password(): string {
+    return this.props.password;
+  }
+
+  public get cpf(): string {
+    return this.props.cpf;
+  }
+
+  public get balance(): Decimal {
+    return this.props.balance;
+  }
+
+  addBalance(value: number) {
+    if (value <= 0) {
+      return new InvalidParams('balance');
+    }
+    this.props.balance = this.props.balance.add(value);
   }
 }
