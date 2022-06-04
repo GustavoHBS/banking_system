@@ -7,27 +7,27 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Account {
+model account {
   id Int@default(autoincrement()) @id
   email String @unique
   name String
   password String
-  cpf String @unique
+  cpf String @unique @db.VarChar(11)
   balance Decimal@default(0)
 }
 
-model Transactions {
+model transactions {
   id BigInt @id @default(autoincrement())
   accountId Int
-  type TransactionType
+  type transactionType
   value Decimal
   date DateTime
   senderId BigInt?
-  sender Transactions? @relation("transferParticipants", fields: [senderId], references: [id])
-  receiver Transactions? @relation("transferParticipants")
+  sender transactions? @relation("transferParticipants", fields: [senderId], references: [id])
+  receiver transactions? @relation("transferParticipants")
 }
 
-enum TransactionType {
+enum transactionType {
   DEPOSIT
   WITHDRAWN
   TRANSFER

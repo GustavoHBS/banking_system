@@ -29,19 +29,19 @@ export class Account {
     this.balance = props.balance;
   }
 
-  static create(props: AccountProps): Account {
+  static create(props: AccountProps): Account | InvalidParams {
     const account = structuredClone(props);
     const email = Email.create(props.email);
     const cpf = Cpf.create(props.cpf);
     const password = Password.create(props.password);
     if (email instanceof InvalidParams) {
-      throw new Error('Email invalido!');
+      return email;
     }
     if (cpf instanceof InvalidParams) {
-      throw new Error('Cpf invalido!');
+      return cpf;
     }
     account.email = email.getValue();
-    account.cpf = email.getValue();
+    account.cpf = cpf.getValue();
     account.password = password.getValue();
     return new Account(account);
   }

@@ -16,13 +16,11 @@ export class AccountController {
   })
   async create(@Body() userData: IUserData, @Res() response: Response) {
     const result = await this.createAccountUseCase.execute(userData);
-    if (result instanceof ServerError) {
-      return response
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .send({ message: result });
+    if (typeof result === 'boolean') {
+      return response.status(HttpStatus.OK).send({
+        message: 'Account created with success!',
+      });
     }
-    return response.status(HttpStatus.OK).send({
-      message: 'Account created with success!',
-    });
+    return response.status(result.status).send({ message: result.message });
   }
 }
