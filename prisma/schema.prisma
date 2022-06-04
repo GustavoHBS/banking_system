@@ -14,6 +14,7 @@ model account {
   password String
   cpf String @unique @db.VarChar(11)
   balance Decimal@default(0)
+  transactions transactions[]
 }
 
 model transactions {
@@ -22,9 +23,10 @@ model transactions {
   type transactionType
   value Decimal
   date DateTime
-  senderId BigInt?
-  sender transactions? @relation("transferParticipants", fields: [senderId], references: [id])
+  senderTransactionId BigInt?
+  sender transactions? @relation("transferParticipants", fields: [senderTransactionId], references: [id])
   receiver transactions? @relation("transferParticipants")
+  owner account @relation(fields: [accountId], references: [id])
 }
 
 enum transactionType {
