@@ -1,12 +1,10 @@
 import { HttpStatus } from '@nestjs/common';
+import { CustomHttpError } from './error';
 
-export class InvalidParams {
-  public readonly status: HttpStatus;
+export class InvalidParams extends CustomHttpError {
   public readonly param: string;
-  public readonly message: string;
   constructor(param: string) {
+    super(`The param ${param} is incorrect!`, HttpStatus.BAD_REQUEST);
     this.param = param;
-    this.message = `The param ${param} is incorrect!`;
-    this.status = HttpStatus.BAD_REQUEST;
   }
 }

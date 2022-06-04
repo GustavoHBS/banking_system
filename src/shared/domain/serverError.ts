@@ -1,11 +1,9 @@
 import { HttpStatus } from '@nestjs/common';
+import { CustomHttpError } from './error';
 
-export class ServerError {
-  public readonly message: string;
-  public readonly status: HttpStatus;
-
-  constructor(message: string, err: any) {
-    this.message = message;
-    this.status = HttpStatus.INTERNAL_SERVER_ERROR;
+export class ServerError extends CustomHttpError {
+  constructor(message: string, err) {
+    console.error(err);
+    super(message, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }
