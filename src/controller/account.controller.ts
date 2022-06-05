@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   HttpStatus,
+  Inject,
   Post,
   Put,
   Query,
@@ -10,16 +11,21 @@ import {
 } from '@nestjs/common';
 import { ApiBody, ApiQuery } from '@nestjs/swagger';
 import { Response } from 'express';
-import { CustomHttpError } from 'src/shared/domain/error';
 import { IAccountAndValue } from 'src/shared/interface/accountAndValue.interface';
 import { ITransfer } from 'src/shared/interface/transfer.interface';
 import { IUserData } from 'src/shared/interface/userData.interface';
-import { CreateAccountUseCase } from 'src/useCase/createAccount.useCase';
-import { DepositUseCase } from 'src/useCase/deposit.useCase';
-import { GetAccountBalanceUseCase } from 'src/useCase/getAccountBalance.useCase';
-import { GetStatementUseCase } from 'src/useCase/getStatement.useCase';
-import { TransferUseCase } from 'src/useCase/transfer.useCase';
-import { WithdrawnUseCase } from 'src/useCase/withdrawn.useCase';
+import { ICreateAccountUseCase } from 'src/useCase/createAccountUseCase.interface';
+import { IDepositUseCase } from 'src/useCase/depositUseCase.interface';
+import { IGetAccountBalanceUseCase } from 'src/useCase/getAccountBalanceUseCase.interface';
+import { IGetStatementUseCase } from 'src/useCase/getStatementUseCase.interface';
+import { CreateAccountUseCase } from 'src/useCase/implementation/createAccount.useCase';
+import { DepositUseCase } from 'src/useCase/implementation/deposit.useCase';
+import { GetAccountBalanceUseCase } from 'src/useCase/implementation/getAccountBalance.useCase';
+import { GetStatementUseCase } from 'src/useCase/implementation/getStatement.useCase';
+import { TransferUseCase } from 'src/useCase/implementation/transfer.useCase';
+import { WithdrawnUseCase } from 'src/useCase/implementation/withdrawn.useCase';
+import { ITransferUseCase } from 'src/useCase/transferUseCase.interface';
+import { IWithdrawnUseCase } from 'src/useCase/withdrawnUseCase.interface';
 import { CreateAccountDTO } from './dto/createAccount.dto';
 import { DepositDTO } from './dto/deposit.dto';
 import { TransferDTO } from './dto/transfer.dto';
@@ -28,12 +34,18 @@ import { WithdrawnDTO } from './dto/withdrawn.dto';
 @Controller('/account')
 export class AccountController {
   constructor(
-    private readonly createAccountUseCase: CreateAccountUseCase,
-    private readonly depositUseCase: DepositUseCase,
-    private readonly getAccountBalanceUseCase: GetAccountBalanceUseCase,
-    private readonly getStatementUseCase: GetStatementUseCase,
-    private readonly transferUseCase: TransferUseCase,
-    private readonly withdrawnUseCase: WithdrawnUseCase,
+    @Inject(CreateAccountUseCase)
+    private readonly createAccountUseCase: ICreateAccountUseCase,
+    @Inject(DepositUseCase)
+    private readonly depositUseCase: IDepositUseCase,
+    @Inject(GetAccountBalanceUseCase)
+    private readonly getAccountBalanceUseCase: IGetAccountBalanceUseCase,
+    @Inject(GetStatementUseCase)
+    private readonly getStatementUseCase: IGetStatementUseCase,
+    @Inject(TransferUseCase)
+    private readonly transferUseCase: ITransferUseCase,
+    @Inject(WithdrawnUseCase)
+    private readonly withdrawnUseCase: IWithdrawnUseCase,
   ) {}
 
   @Post('/create')

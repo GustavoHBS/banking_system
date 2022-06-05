@@ -1,10 +1,15 @@
-import { Injectable } from '@nestjs/common';
-import { AccountRepository } from 'src/repository/account.repository';
+import { Inject, Injectable } from '@nestjs/common';
+import { IAccountRepository } from 'src/repository/accountRepository.interface';
+import { AccountRepository } from 'src/repository/implementation/account.repository';
 import { InvalidCoditionException } from 'src/shared/exception/invalidCondition.exception';
+import { IGetAccountBalanceUseCase } from '../getAccountBalanceUseCase.interface';
 
 @Injectable()
-export class GetAccountBalanceUseCase {
-  constructor(private accountRepository: AccountRepository) {}
+export class GetAccountBalanceUseCase implements IGetAccountBalanceUseCase {
+  constructor(
+    @Inject(AccountRepository)
+    private accountRepository: IAccountRepository,
+  ) {}
 
   async execute(accountIdReq: string): Promise<number> {
     const accountId = parseInt(accountIdReq);

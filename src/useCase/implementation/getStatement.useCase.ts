@@ -1,13 +1,18 @@
-import { Injectable } from '@nestjs/common';
-import { AccountRepository } from 'src/repository/account.repository';
+import { Inject, Injectable } from '@nestjs/common';
+import { AccountRepository } from 'src/repository/implementation/account.repository';
 import { TransactionType } from 'src/shared/enum/transactionType.enum';
 import { IStatement } from 'src/shared/interface/statement.interface';
 import { transactions } from '@prisma/client';
 import { InvalidCoditionException } from 'src/shared/exception/invalidCondition.exception';
+import { IGetStatementUseCase } from '../getStatementUseCase.interface';
+import { IAccountRepository } from 'src/repository/accountRepository.interface';
 
 @Injectable()
-export class GetStatementUseCase {
-  constructor(private accountRepository: AccountRepository) {}
+export class GetStatementUseCase implements IGetStatementUseCase {
+  constructor(
+    @Inject(AccountRepository)
+    private accountRepository: IAccountRepository,
+  ) {}
 
   async execute(accountId: number): Promise<IStatement[]> {
     const transactions = await this.accountRepository.getAccountTransactions(

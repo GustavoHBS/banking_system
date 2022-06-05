@@ -1,27 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import {
-  prisma,
-  PrismaClient,
-  PrismaPromise,
-  transactions,
-} from '@prisma/client';
+import { PrismaClient, transactions } from '@prisma/client';
 import { Account } from 'src/shared/domain/account';
 import { InvalidCoditionException } from 'src/shared/exception/invalidCondition.exception';
 import { TransactionType } from 'src/shared/enum/transactionType.enum';
 import { ITransaction } from 'src/shared/interface/transaction.interface';
 import { AccountMapper } from 'src/shared/mapper/account.mapper';
 import { Decimal } from '@prisma/client/runtime';
+import { IAccountRepository } from '../accountRepository.interface';
 
 @Injectable()
-export class AccountRepository {
+export class AccountRepository implements IAccountRepository {
   private repository: PrismaClient;
   constructor() {
     this.repository = new PrismaClient();
   }
-  async create(account: IAccount) {
-    return this.repository.account.create({
-      data: account,
-    });
+  async create(account: IAccount): Promise<Account> {
+    return this.repository.account
+      .create({
+        data: account,
+      })
+      .then(AccountMapper.toDomain);
   }
 
   findById(id: number): Promise<Account | null> {
@@ -121,7 +119,7 @@ export class AccountRepository {
     });
   }
 
-  validateBalance(balance: Decimal): void | never {
+  private validateBalance(balance: Decimal): void | never {
     if (balance.lessThan(0)) {
       throw new InvalidCoditionException(
         'The value required is greater than balance!!!',

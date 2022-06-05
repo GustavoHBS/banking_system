@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { AccountController } from './controller/account.controller';
 import { AccountRepository } from './repository/account.repository';
-import { CreateAccountUseCase } from './useCase/createAccount.useCase';
-import { DepositUseCase } from './useCase/deposit.useCase';
-import { GetAccountBalanceUseCase } from './useCase/getAccountBalance.useCase';
-import { GetStatementUseCase } from './useCase/getStatement.useCase';
-import { TransferUseCase } from './useCase/transfer.useCase';
-import { WithdrawnUseCase } from './useCase/withdrawn.useCase';
+import { CreateAccountUseCase } from './useCase/implementation/createAccount.useCase';
+import { DepositUseCase } from './useCase/implementation/deposit.useCase';
+import { GetAccountBalanceUseCase } from './useCase/implementation/getAccountBalance.useCase';
+import { GetStatementUseCase } from './useCase/implementation/getStatement.useCase';
+import { TransferUseCase } from './useCase/implementation/transfer.useCase';
+import { WithdrawnUseCase } from './useCase/implementation/withdrawn.useCase';
 
 @Module({
   imports: [],
