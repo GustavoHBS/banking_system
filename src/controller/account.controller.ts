@@ -9,7 +9,7 @@ import {
   Query,
   Res,
 } from '@nestjs/common';
-import { ApiBody, ApiQuery } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { Response } from 'express';
 import { IAccountAndValue } from 'src/shared/interface/accountAndValue.interface';
 import { ITransfer } from 'src/shared/interface/transfer.interface';
@@ -27,9 +27,15 @@ import { WithdrawnUseCase } from 'src/useCase/implementation/withdrawn.useCase';
 import { ITransferUseCase } from 'src/useCase/transferUseCase.interface';
 import { IWithdrawnUseCase } from 'src/useCase/withdrawnUseCase.interface';
 import { CreateAccountDTO } from './dto/createAccount.dto';
+import { CreateAccountResponseDTO } from './dto/createAccountResponse.dto';
 import { DepositDTO } from './dto/deposit.dto';
+import { DepositResponseDTO } from './dto/depositResponse.dto';
+import { GetBalanceResponseDTO } from './dto/getBalanceResponse.dto';
+import { GetStatementResponseDTO } from './dto/getStatementResponse.dto';
 import { TransferDTO } from './dto/transfer.dto';
+import { transferResponseDTO } from './dto/transferResponse.dto';
 import { WithdrawnDTO } from './dto/withdrawn.dto';
+import { WithdrawnResponseDTO } from './dto/withdrawnResponse.dto';
 
 @Controller('/account')
 export class AccountController {
@@ -49,20 +55,36 @@ export class AccountController {
   ) {}
 
   @Post('/create')
+  @ApiOperation({
+    description: 'Route to create a new account',
+    summary: 'Create Account',
+  })
   @ApiBody({
     type: CreateAccountDTO,
   })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    type: CreateAccountResponseDTO,
+  })
   async create(@Body() userData: IUserData, @Res() response: Response) {
     const account = await this.createAccountUseCase.execute(userData);
-    return response.status(HttpStatus.OK).send({
+    return response.status(HttpStatus.CREATED).send({
       message: 'Account created with success!',
       account,
     });
   }
 
   @Post('/deposit')
+  @ApiOperation({
+    description: 'Route to make a deposit in account',
+    summary: 'Deposit',
+  })
   @ApiBody({
     type: DepositDTO,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: DepositResponseDTO,
   })
   async deposit(
     @Body() depositValue: IAccountAndValue,
@@ -76,9 +98,17 @@ export class AccountController {
   }
 
   @Get('/balance')
+  @ApiOperation({
+    description: 'Route to recover balance of account',
+    summary: 'Balance',
+  })
   @ApiQuery({
     name: 'accountId',
     type: Number,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: GetBalanceResponseDTO,
   })
   async getBalance(
     @Query('accountId') accountId: string,
@@ -91,9 +121,18 @@ export class AccountController {
   }
 
   @Get('/statement')
+  @ApiOperation({
+    description: 'Route to recover all transactions of account',
+    summary: 'Statement',
+  })
   @ApiQuery({
     name: 'accountId',
     type: Number,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: GetStatementResponseDTO,
+    isArray: true,
   })
   async getStatement(
     @Query('accountId') accountId: string,
@@ -106,19 +145,35 @@ export class AccountController {
   }
 
   @Put('/transfer')
+  @ApiOperation({
+    description: 'Route to transfer money between account',
+    summary: 'Transfer money',
+  })
   @ApiBody({
     type: TransferDTO,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: transferResponseDTO,
   })
   async transfer(@Body() transfer: ITransfer, @Res() response: Response) {
     await this.transferUseCase.execute(transfer);
     return response.status(HttpStatus.OK).send({
-      message: 'Transfer is success!',
+      message: 'Transfer has been success!',
     });
   }
 
   @Put('/withdrawn')
+  @ApiOperation({
+    description: 'Route to withdrawn money of account',
+    summary: 'Withdrawn',
+  })
   @ApiBody({
     type: WithdrawnDTO,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: WithdrawnResponseDTO,
   })
   async withdrawn(
     @Body() withdrawnDto: IAccountAndValue,

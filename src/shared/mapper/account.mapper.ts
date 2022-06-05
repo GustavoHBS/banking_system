@@ -20,12 +20,11 @@ export class AccountMapper {
     };
   }
 
-  static toDTO(account: Account): IAccount {
+  static toDTO(account: Account): IAccountDTO {
     return {
       id: account.id,
       name: account.name,
       email: account.email,
-      password: account.password,
       cpf: account.cpf,
       balance: account.balance?.toNumber(),
     };

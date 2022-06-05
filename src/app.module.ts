@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AccountController } from './controller/account.controller';
-import { AccountRepository } from './repository/account.repository';
+import { AccountRepository } from './repository/implementation/account.repository';
 import { CreateAccountUseCase } from './useCase/implementation/createAccount.useCase';
 import { DepositUseCase } from './useCase/implementation/deposit.useCase';
 import { GetAccountBalanceUseCase } from './useCase/implementation/getAccountBalance.useCase';

@@ -14,7 +14,7 @@ export class CreateAccountUseCase implements ICreateAccountUseCase {
     private accountRepository: IAccountRepository,
   ) {}
 
-  async execute(userData: IUserData): Promise<IAccount> {
+  async execute(userData: IUserData): Promise<IAccountDTO> {
     const account = Account.create(userData);
     return this.accountRepository
       .create(AccountMapper.toEntity(account))
