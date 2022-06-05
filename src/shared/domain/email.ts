@@ -1,4 +1,4 @@
-import { InvalidParam } from './invalidParams';
+import { InvalidParam } from './invalidParam';
 
 export class Email {
   private email: string;

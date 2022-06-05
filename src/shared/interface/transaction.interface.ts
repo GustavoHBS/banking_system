@@ -5,6 +5,6 @@ export interface ITransaction {
   accountId: number;
   type: TransactionType;
   value: number;
-  date: Date;
-  senderId?: number;
+  date?: Date;
+  senderTransactionId?: number;
 }

@@ -3,9 +3,10 @@ import { AccountRepository } from 'src/repository/account.repository';
 import { ServerError } from 'src/shared/domain/serverError';
 import { IDepositProps } from 'src/shared/interface/depositProps.interface';
 import { AccountMapper } from 'src/shared/mapper/account.mapper';
-import { account, transactions } from '@prisma/client';
+import { account, prisma, transactions } from '@prisma/client';
 import { TransactionType } from 'src/shared/enum/transactionType.enum';
 import { ITransfer } from 'src/shared/interface/transfer.interface';
+import { Account } from 'src/shared/domain/account';
 
 @Injectable()
 export class TransferUseCase {
@@ -15,14 +16,19 @@ export class TransferUseCase {
     const { value } = transferProps;
     const senderAccount = await this.getAccount(transferProps.senderId);
     const receiverAccount = await this.getAccount(transferProps.receiverId);
-    const transaction = await this.removeValueOfSender(senderAccount, value);
-    const updatedAccount = await this.addBalanceInAccount(
-      receiverAccount,
-      value,
-      transaction,
-    );
-    await this.createDepositTransaction(accountId, value);
-    return updatedAccount.balance.toNumber();
+    const sender = this.removeValueOfSender(senderAccount, value);
+    const receiver = this.addBalanceInReceiver(receiverAccount, value);
+    return this.accountRepository
+      .saveTransfer(
+        AccountMapper.toEntity(sender),
+        AccountMapper.toEntity(receiver),
+        value,
+      )
+      .then(() => true)
+      .catch((err) => {
+        console.log(err);
+        return false;
+      });
   }
 
   private async getAccount(accountId: number) {
@@ -33,57 +39,15 @@ export class TransferUseCase {
     return accountResult;
   }
 
-  private async removeValueOfSender(accountData: account, value: number) {
+  private removeValueOfSender(accountData: account, value: number): Account {
+    const account = AccountMapper.toDomain(accountData);
+    account.subBalance(value);
+    return account;
+  }
+
+  private addBalanceInReceiver(accountData: account, value: number): Account {
     const account = AccountMapper.toDomain(accountData);
     account.addBalance(value);
-    await this.accountRepository
-      .update(AccountMapper.toEntity(account))
-      .catch((err) => {
-        throw new ServerError(
-          'There was an error on update balance of account',
-          err,
-        );
-      });
-    return this.createTransactionOfSender(account.id, value);
-  }
-
-  private async addBalanceInAccount(
-    accountData: account,
-    value: number,
-    transaction: transactions,
-  ) {
-    const account = AccountMapper.toDomain(accountData);
-    account.addBalance(value);
-    await this.accountRepository
-      .update(AccountMapper.toEntity(account))
-      .catch((err) => {
-        throw new ServerError(
-          'There was an error on update balance of account',
-          err,
-        );
-      });
-  }
-
-  private createTransactionOfSender(accountId: number, value: number) {
-    return this.accountRepository.createTransaction({
-      accountId,
-      value: value,
-      date: new Date(),
-      type: TransactionType.TRANSFER,
-    });
-  }
-
-  private createTransactionOfReceiver(
-    accountId: number,
-    value: number,
-    transaction: transactions,
-  ) {
-    return this.accountRepository.createTransaction({
-      accountId,
-      value,
-      date: new Date(),
-      type: TransactionType.TRANSFER,
-      senderId: transaction.senderId,
-    });
+    return account;
   }
 }

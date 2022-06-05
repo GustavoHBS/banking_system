@@ -12,13 +12,17 @@ import {
 import { ApiBody, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { Response } from 'express';
 import { CustomHttpError } from 'src/shared/domain/error';
+import { InvalidParam } from 'src/shared/domain/invalidParam';
 import { IDepositProps } from 'src/shared/interface/depositProps.interface';
+import { ITransfer } from 'src/shared/interface/transfer.interface';
 import { IUserData } from 'src/shared/interface/userData.interface';
 import { CreateAccountUseCase } from 'src/useCase/createAccount.useCase';
 import { DepositUseCase } from 'src/useCase/deposit.useCase';
 import { GetAccountBalanceUseCase } from 'src/useCase/getAccountBalance.useCase';
+import { TransferUseCase } from 'src/useCase/transfer.useCase';
 import { CreateAccountDTO } from './dto/createAccount.dto';
 import { DepositDTO } from './dto/deposit.dto';
+import { TransferDTO } from './dto/transfer.dto';
 
 @Controller('/account')
 export class AccountController {
@@ -26,6 +30,7 @@ export class AccountController {
     private readonly createAccountUseCase: CreateAccountUseCase,
     private readonly depositUseCase: DepositUseCase,
     private readonly getAccountBalanceUseCase: GetAccountBalanceUseCase,
+    private readonly transferUseCase: TransferUseCase,
   ) {}
 
   @Post('/create')
@@ -77,13 +82,24 @@ export class AccountController {
   @ApiBody({
     type: TransferDTO,
   })
-  async getBalance(
-    @Query('accountId') accountId: string,
-    @Res() response: Response,
-  ) {
-    const balance = await this.getAccountBalanceUseCase.execute(accountId);
-    return response.status(HttpStatus.OK).send({
-      balance,
-    });
+  async transfer(@Body() transfer: ITransfer, @Res() response: Response) {
+    try {
+      const isSuccess = await this.transferUseCase.execute(transfer);
+      if (isSuccess) {
+        return response.status(HttpStatus.OK).send({
+          message: 'Transfer is success!',
+        });
+      }
+      return response.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
+        message: 'An error occurred while performing the transfer!',
+      });
+    } catch (err) {
+      if (err instanceof InvalidParam) {
+        return response.status(err.status).send({
+          message: err.message,
+        });
+      }
+      return response.status(HttpStatus.INTERNAL_SERVER_ERROR).send('ERR');
+    }
   }
 }

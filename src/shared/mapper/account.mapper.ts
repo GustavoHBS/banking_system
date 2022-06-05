@@ -17,7 +17,7 @@ export class AccountMapper {
       email: account.email,
       password: account.password,
       cpf: account.cpf,
-      balance: account.balance.toNumber(),
+      balance: account.balance?.toNumber(),
     };
   }
 }

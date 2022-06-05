@@ -72,10 +72,13 @@ export class Account extends Entity<IAccountProps> {
 
   subBalance(value: number) {
     if (value <= 0) {
-      return new InvalidParam('balance');
+      throw new InvalidParam('balance');
     }
     if (this.balance.lessThan(value)) {
-      return false;
+      throw new InvalidParam(
+        'balance',
+        'The Balance of account is not enough!',
+      );
     }
     this.props.balance.sub(value);
     return true;
