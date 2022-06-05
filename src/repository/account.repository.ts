@@ -23,12 +23,14 @@ export class AccountRepository {
     });
   }
 
-  findById(id: number) {
-    return this.repository.account.findUnique({
-      where: {
-        id,
-      },
-    });
+  findById(id: number): Promise<Account | null> {
+    return this.repository.account
+      .findUnique({
+        where: {
+          id,
+        },
+      })
+      .then((account) => (account ? AccountMapper.toDomain(account) : null));
   }
 
   getAccountTransactions(id: number): Promise<transactions[]> {

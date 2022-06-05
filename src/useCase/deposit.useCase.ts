@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { AccountRepository } from 'src/repository/account.repository';
-import { ServerError } from 'src/shared/domain/serverError';
+import { ServerException } from 'src/shared/exception/ServerException';
 import { IAccountAndValue } from 'src/shared/interface/accountAndValue.interface';
 import { AccountMapper } from 'src/shared/mapper/account.mapper';
 import { account } from '@prisma/client';
@@ -32,7 +32,7 @@ export class DepositUseCase {
     return this.accountRepository
       .update(AccountMapper.toEntity(account))
       .catch((err) => {
-        throw new ServerError(
+        throw new ServerException(
           'There was an error on update balance of account',
           err,
         );

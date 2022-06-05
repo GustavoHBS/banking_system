@@ -1,5 +1,6 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { AccountRepository } from 'src/repository/account.repository';
+import { InvalidCoditionException } from 'src/shared/exception/invalidCondition.exception';
 
 @Injectable()
 export class GetAccountBalanceUseCase {
@@ -14,7 +15,7 @@ export class GetAccountBalanceUseCase {
   private async getAccount(accountId: number) {
     const accountFounded = await this.accountRepository.findById(accountId);
     if (!accountFounded) {
-      throw new HttpException('Account not found', HttpStatus.BAD_REQUEST);
+      throw new InvalidCoditionException('Account not found!');
     }
     return accountFounded;
   }

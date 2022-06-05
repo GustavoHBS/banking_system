@@ -1,12 +1,11 @@
 import { account } from '@prisma/client';
-import { Decimal } from '@prisma/client/runtime';
 import { Account } from '../domain/account';
 
 export class AccountMapper {
-  static toDomain(account: IAccount | account): Account {
+  static toDomain(account: account): Account {
     return Account.create({
       ...account,
-      balance: new Decimal(account.balance),
+      balance: account.balance,
     });
   }
 

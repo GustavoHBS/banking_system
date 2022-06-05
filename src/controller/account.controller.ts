@@ -41,13 +41,10 @@ export class AccountController {
     type: CreateAccountDTO,
   })
   async create(@Body() userData: IUserData, @Res() response: Response) {
-    const result = await this.createAccountUseCase.execute(userData);
-    if (result instanceof CustomHttpError) {
-      return response.status(result.status).send({ message: result.message });
-    }
+    const account = await this.createAccountUseCase.execute(userData);
     return response.status(HttpStatus.OK).send({
       message: 'Account created with success!',
-      accountId: result,
+      account,
     });
   }
 
