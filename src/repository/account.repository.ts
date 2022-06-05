@@ -1,5 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { prisma, PrismaClient, PrismaPromise } from '@prisma/client';
+import {
+  prisma,
+  PrismaClient,
+  PrismaPromise,
+  transactions,
+} from '@prisma/client';
 import { Account } from 'src/shared/domain/account';
 import { InvalidParam } from 'src/shared/domain/invalidParam';
 import { TransactionType } from 'src/shared/enum/transactionType.enum';
@@ -24,6 +29,19 @@ export class AccountRepository {
         id,
       },
     });
+  }
+
+  getAccountTransactions(id: number): Promise<transactions[]> {
+    return this.repository.account
+      .findUnique({
+        where: {
+          id,
+        },
+        include: {
+          transactions: true,
+        },
+      })
+      .then((account) => account?.transactions);
   }
 
   update(account: IAccount) {

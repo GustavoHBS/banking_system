@@ -4,6 +4,7 @@ import { AccountRepository } from './repository/account.repository';
 import { CreateAccountUseCase } from './useCase/createAccount.useCase';
 import { DepositUseCase } from './useCase/deposit.useCase';
 import { GetAccountBalanceUseCase } from './useCase/getAccountBalance.useCase';
+import { GetStatementUseCase } from './useCase/getStatement.useCase';
 import { TransferUseCase } from './useCase/transfer.useCase';
 import { WithdrawnUseCase } from './useCase/withdrawn.useCase';
 
@@ -15,6 +16,7 @@ import { WithdrawnUseCase } from './useCase/withdrawn.useCase';
     AccountRepository,
     DepositUseCase,
     GetAccountBalanceUseCase,
+    GetStatementUseCase,
     TransferUseCase,
     WithdrawnUseCase,
   ],

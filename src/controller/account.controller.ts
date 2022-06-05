@@ -19,6 +19,7 @@ import { IUserData } from 'src/shared/interface/userData.interface';
 import { CreateAccountUseCase } from 'src/useCase/createAccount.useCase';
 import { DepositUseCase } from 'src/useCase/deposit.useCase';
 import { GetAccountBalanceUseCase } from 'src/useCase/getAccountBalance.useCase';
+import { GetStatementUseCase } from 'src/useCase/getStatement.useCase';
 import { TransferUseCase } from 'src/useCase/transfer.useCase';
 import { WithdrawnUseCase } from 'src/useCase/withdrawn.useCase';
 import { CreateAccountDTO } from './dto/createAccount.dto';
@@ -32,6 +33,7 @@ export class AccountController {
     private readonly createAccountUseCase: CreateAccountUseCase,
     private readonly depositUseCase: DepositUseCase,
     private readonly getAccountBalanceUseCase: GetAccountBalanceUseCase,
+    private readonly getStatementUseCase: GetStatementUseCase,
     private readonly transferUseCase: TransferUseCase,
     private readonly withdrawnUseCase: WithdrawnUseCase,
   ) {}
@@ -79,6 +81,21 @@ export class AccountController {
     return response.status(HttpStatus.OK).send({
       balance,
     });
+  }
+
+  @Get('/statement')
+  @ApiQuery({
+    name: 'accountId',
+    type: Number,
+  })
+  async getStatement(
+    @Query('accountId') accountId: string,
+    @Res() response: Response,
+  ) {
+    const statement = await this.getStatementUseCase.execute(
+      parseInt(accountId),
+    );
+    return response.status(HttpStatus.OK).send(statement);
   }
 
   @Put('/transfer')
