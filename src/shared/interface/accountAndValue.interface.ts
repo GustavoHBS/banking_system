@@ -1,4 +1,4 @@
-export interface IDepositProps {
+export interface IAccountAndValue {
   value: number;
   accountId: number;
 }

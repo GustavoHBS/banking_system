@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { AccountRepository } from 'src/repository/account.repository';
 import { ServerError } from 'src/shared/domain/serverError';
-import { IDepositProps } from 'src/shared/interface/depositProps.interface';
+import { IAccountAndValue } from 'src/shared/interface/accountAndValue.interface';
 import { AccountMapper } from 'src/shared/mapper/account.mapper';
 import { account, prisma, transactions } from '@prisma/client';
 import { TransactionType } from 'src/shared/enum/transactionType.enum';

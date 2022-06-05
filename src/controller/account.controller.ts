@@ -13,16 +13,18 @@ import { ApiBody, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { Response } from 'express';
 import { CustomHttpError } from 'src/shared/domain/error';
 import { InvalidParam } from 'src/shared/domain/invalidParam';
-import { IDepositProps } from 'src/shared/interface/depositProps.interface';
+import { IAccountAndValue } from 'src/shared/interface/accountAndValue.interface';
 import { ITransfer } from 'src/shared/interface/transfer.interface';
 import { IUserData } from 'src/shared/interface/userData.interface';
 import { CreateAccountUseCase } from 'src/useCase/createAccount.useCase';
 import { DepositUseCase } from 'src/useCase/deposit.useCase';
 import { GetAccountBalanceUseCase } from 'src/useCase/getAccountBalance.useCase';
 import { TransferUseCase } from 'src/useCase/transfer.useCase';
+import { WithdrawnUseCase } from 'src/useCase/withdrawn.useCase';
 import { CreateAccountDTO } from './dto/createAccount.dto';
 import { DepositDTO } from './dto/deposit.dto';
 import { TransferDTO } from './dto/transfer.dto';
+import { WithdrawnDTO } from './dto/withdrawn.dto';
 
 @Controller('/account')
 export class AccountController {
@@ -31,6 +33,7 @@ export class AccountController {
     private readonly depositUseCase: DepositUseCase,
     private readonly getAccountBalanceUseCase: GetAccountBalanceUseCase,
     private readonly transferUseCase: TransferUseCase,
+    private readonly withdrawnUseCase: WithdrawnUseCase,
   ) {}
 
   @Post('/create')
@@ -53,7 +56,7 @@ export class AccountController {
     type: DepositDTO,
   })
   async deposit(
-    @Body() depositValue: IDepositProps,
+    @Body() depositValue: IAccountAndValue,
     @Res() response: Response,
   ) {
     const newBalance = await this.depositUseCase.execute(depositValue);
@@ -94,6 +97,35 @@ export class AccountController {
         message: 'An error occurred while performing the transfer!',
       });
     } catch (err) {
+      if (err instanceof InvalidParam) {
+        return response.status(err.status).send({
+          message: err.message,
+        });
+      }
+      return response.status(HttpStatus.INTERNAL_SERVER_ERROR).send('ERR');
+    }
+  }
+
+  @Put('/withdrawn')
+  @ApiBody({
+    type: WithdrawnDTO,
+  })
+  async withdrawn(
+    @Body() withdrawnDto: IAccountAndValue,
+    @Res() response: Response,
+  ) {
+    try {
+      const isSuccess = await this.withdrawnUseCase.execute(withdrawnDto);
+      if (isSuccess) {
+        return response.status(HttpStatus.OK).send({
+          message: 'Withdrawn success!',
+        });
+      }
+      return response.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
+        message: 'An error occurred while performing the withdrawn!',
+      });
+    } catch (err) {
+      console.log(err);
       if (err instanceof InvalidParam) {
         return response.status(err.status).send({
           message: err.message,

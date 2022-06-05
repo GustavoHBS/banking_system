@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { AccountRepository } from 'src/repository/account.repository';
 import { ServerError } from 'src/shared/domain/serverError';
-import { IDepositProps } from 'src/shared/interface/depositProps.interface';
+import { IAccountAndValue } from 'src/shared/interface/accountAndValue.interface';
 import { AccountMapper } from 'src/shared/mapper/account.mapper';
 import { account } from '@prisma/client';
 import { TransactionType } from 'src/shared/enum/transactionType.enum';
@@ -10,7 +10,7 @@ import { TransactionType } from 'src/shared/enum/transactionType.enum';
 export class DepositUseCase {
   constructor(private accountRepository: AccountRepository) {}
 
-  async execute(depositProps: IDepositProps): Promise<number> {
+  async execute(depositProps: IAccountAndValue): Promise<number> {
     const { accountId, value } = depositProps;
     const account = await this.getAccount(accountId);
     const updatedAccount = await this.addBalanceInAccount(account, value);

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaClient, PrismaPromise } from '@prisma/client';
+import { prisma, PrismaClient, PrismaPromise } from '@prisma/client';
 import { Account } from 'src/shared/domain/account';
+import { InvalidParam } from 'src/shared/domain/invalidParam';
 import { TransactionType } from 'src/shared/enum/transactionType.enum';
 import { ITransaction } from 'src/shared/interface/transaction.interface';
 import { AccountMapper } from 'src/shared/mapper/account.mapper';
@@ -78,5 +79,27 @@ export class AccountRepository {
         });
       },
     );
+  }
+
+  async withdrawn(accountId: number, value: number): Promise<boolean> {
+    return this.repository.$transaction(async (prismaTransaction) => {
+      const accountUpdated = await prismaTransaction.account.update({
+        data: {
+          balance: {
+            decrement: value,
+          },
+        },
+        where: {
+          id: accountId,
+        },
+      });
+      if (accountUpdated.balance.lessThan(0)) {
+        throw new InvalidParam(
+          'Balance',
+          'The balance is not sufficient enough!',
+        );
+      }
+      return true;
+    });
   }
 }
