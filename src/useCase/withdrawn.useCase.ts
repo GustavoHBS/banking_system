@@ -8,21 +8,18 @@ import { InvalidCoditionException } from 'src/shared/exception/invalidCondition.
 export class WithdrawnUseCase {
   constructor(private accountRepository: AccountRepository) {}
 
-  async execute(depositProps: IAccountAndValue): Promise<boolean> {
+  async execute(depositProps: IAccountAndValue): Promise<number> {
     const { accountId, value } = depositProps;
     const account = await this.accountRepository.findById(accountId);
     if (!account) {
       throw new InvalidCoditionException("Account don't exists");
     }
-    const withdrawnIsSuccess = await this.accountRepository.withdrawn(
-      accountId,
-      value,
-    );
+    const newBalance = await this.accountRepository.withdrawn(accountId, value);
     await this.accountRepository.createTransaction({
       accountId,
       type: TransactionType.WITHDRAWN,
       value,
     });
-    return withdrawnIsSuccess;
+    return newBalance;
   }
 }

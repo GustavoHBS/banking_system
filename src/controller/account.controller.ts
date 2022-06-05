@@ -98,14 +98,9 @@ export class AccountController {
     type: TransferDTO,
   })
   async transfer(@Body() transfer: ITransfer, @Res() response: Response) {
-    const isSuccess = await this.transferUseCase.execute(transfer);
-    if (isSuccess) {
-      return response.status(HttpStatus.OK).send({
-        message: 'Transfer is success!',
-      });
-    }
-    return response.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
-      message: 'An error occurred while performing the transfer!',
+    await this.transferUseCase.execute(transfer);
+    return response.status(HttpStatus.OK).send({
+      message: 'Transfer is success!',
     });
   }
 
@@ -117,14 +112,10 @@ export class AccountController {
     @Body() withdrawnDto: IAccountAndValue,
     @Res() response: Response,
   ) {
-    const isSuccess = await this.withdrawnUseCase.execute(withdrawnDto);
-    if (isSuccess) {
-      return response.status(HttpStatus.OK).send({
-        message: 'Withdrawn success!',
-      });
-    }
-    return response.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
-      message: 'An error occurred while performing the withdrawn!',
+    const newBalance = await this.withdrawnUseCase.execute(withdrawnDto);
+    return response.status(HttpStatus.OK).send({
+      message: 'Withdrawn success!',
+      newBalance,
     });
   }
 }

@@ -4,6 +4,7 @@ import { AccountMapper } from 'src/shared/mapper/account.mapper';
 import { account } from '@prisma/client';
 import { ITransfer } from 'src/shared/interface/transfer.interface';
 import { Account } from 'src/shared/domain/account';
+import { ServerException } from 'src/shared/exception/ServerException';
 
 @Injectable()
 export class TransferUseCase {
@@ -23,8 +24,10 @@ export class TransferUseCase {
       )
       .then(() => true)
       .catch((err) => {
-        console.log(err);
-        return false;
+        throw new ServerException(
+          'Occurred error in transfer, none transfer has been done! Try again',
+          err,
+        );
       });
   }
 

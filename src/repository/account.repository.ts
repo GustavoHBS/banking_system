@@ -10,6 +10,7 @@ import { InvalidCoditionException } from 'src/shared/exception/invalidCondition.
 import { TransactionType } from 'src/shared/enum/transactionType.enum';
 import { ITransaction } from 'src/shared/interface/transaction.interface';
 import { AccountMapper } from 'src/shared/mapper/account.mapper';
+import { Decimal } from '@prisma/client/runtime';
 
 @Injectable()
 export class AccountRepository {
@@ -70,12 +71,13 @@ export class AccountRepository {
   ) {
     return this.repository.$transaction(
       async (prismaTransaction: PrismaClient) => {
-        await prismaTransaction.account.update({
+        const updatedSender = await prismaTransaction.account.update({
           data: senderAccount,
           where: {
             id: senderAccount.id,
           },
         });
+        this.validateBalance(updatedSender.balance);
         const senderTrancation = await prismaTransaction.transactions.create({
           data: {
             accountId: senderAccount.id,
@@ -101,7 +103,7 @@ export class AccountRepository {
     );
   }
 
-  async withdrawn(accountId: number, value: number): Promise<boolean> {
+  async withdrawn(accountId: number, value: number): Promise<number> {
     return this.repository.$transaction(async (prismaTransaction) => {
       const accountUpdated = await prismaTransaction.account.update({
         data: {
@@ -113,12 +115,17 @@ export class AccountRepository {
           id: accountId,
         },
       });
-      if (accountUpdated.balance.lessThan(0)) {
-        throw new InvalidCoditionException(
-          'The value required is greater than balance!!!',
-        );
-      }
-      return true;
+      const balance = accountUpdated.balance;
+      this.validateBalance(balance);
+      return balance.toNumber();
     });
+  }
+
+  validateBalance(balance: Decimal): void | never {
+    if (balance.lessThan(0)) {
+      throw new InvalidCoditionException(
+        'The value required is greater than balance!!!',
+      );
+    }
   }
 }
