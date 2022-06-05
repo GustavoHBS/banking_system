@@ -80,7 +80,7 @@ export class Account extends Entity<IAccountProps> {
         'The Balance of account is not enough!',
       );
     }
-    this.props.balance.sub(value);
+    this.props.balance = this.props.balance.sub(value);
     return true;
   }
 }

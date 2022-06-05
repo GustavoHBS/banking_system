@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, PrismaPromise } from '@prisma/client';
 import { Account } from 'src/shared/domain/account';
 import { TransactionType } from 'src/shared/enum/transactionType.enum';
 import { ITransaction } from 'src/shared/interface/transaction.interface';
@@ -47,36 +47,36 @@ export class AccountRepository {
     receiverAccount: IAccount,
     value: number,
   ) {
-    const transactions = [];
-    transactions.push(async (prismaTransaction: PrismaClient) => {
-      await prismaTransaction.account.update({
-        data: senderAccount,
-        where: {
-          id: senderAccount.id,
-        },
-      });
-      const senderTrancation = await prismaTransaction.transactions.create({
-        data: {
-          accountId: senderAccount.id,
-          type: TransactionType.TRANSFER,
-          value,
-        },
-      });
-      await prismaTransaction.account.update({
-        data: receiverAccount,
-        where: {
-          id: receiverAccount.id,
-        },
-      });
-      return prismaTransaction.transactions.create({
-        data: {
-          accountId: receiverAccount.id,
-          type: TransactionType.TRANSFER,
-          value,
-          senderTransactionId: senderTrancation.id,
-        },
-      });
-    });
-    return this.repository.$transaction(transactions);
+    return this.repository.$transaction(
+      async (prismaTransaction: PrismaClient) => {
+        await prismaTransaction.account.update({
+          data: senderAccount,
+          where: {
+            id: senderAccount.id,
+          },
+        });
+        const senderTrancation = await prismaTransaction.transactions.create({
+          data: {
+            accountId: senderAccount.id,
+            type: TransactionType.TRANSFER,
+            value,
+          },
+        });
+        await prismaTransaction.account.update({
+          data: receiverAccount,
+          where: {
+            id: receiverAccount.id,
+          },
+        });
+        return prismaTransaction.transactions.create({
+          data: {
+            accountId: receiverAccount.id,
+            type: TransactionType.TRANSFER,
+            value,
+            senderTransactionId: senderTrancation.id,
+          },
+        });
+      },
+    );
   }
 }
