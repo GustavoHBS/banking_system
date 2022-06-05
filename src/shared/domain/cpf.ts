@@ -1,4 +1,4 @@
-import { InvalidParam } from './invalidParam';
+import { InvalidCoditionException } from '../exception/invalidCondition.exception';
 
 export class Cpf {
   private cpf: string;
@@ -7,11 +7,11 @@ export class Cpf {
     this.cpf = cpf;
   }
 
-  static create(cpf: string): Cpf | InvalidParam {
+  static create(cpf: string): Cpf {
     const CPF_LENGTH = 11;
     const cpfNumbers = cpf.replace(/[^\d]/g, '');
     if (cpfNumbers.length != CPF_LENGTH) {
-      return new InvalidParam('cpf');
+      throw new InvalidCoditionException('CPF invalid!');
     }
     return new Cpf(cpf);
   }

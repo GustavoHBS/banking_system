@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { AccountRepository } from 'src/repository/account.repository';
 import { TransactionType } from 'src/shared/enum/transactionType.enum';
-import { InvalidParam } from 'src/shared/domain/invalidParam';
 import { IStatement } from 'src/shared/interface/statement.interface';
 import { transactions } from '@prisma/client';
+import { InvalidCoditionException } from 'src/shared/exception/invalidCondition.exception';
 
 @Injectable()
 export class GetStatementUseCase {
@@ -14,7 +14,7 @@ export class GetStatementUseCase {
       accountId,
     );
     if (!transactions) {
-      throw new InvalidParam('accountId', 'Account not found for this ID!');
+      throw new InvalidCoditionException('Account not found for this ID!');
     }
     return transactions.map(this.formatStatement);
   }

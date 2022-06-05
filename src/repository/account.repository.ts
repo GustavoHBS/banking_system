@@ -6,7 +6,7 @@ import {
   transactions,
 } from '@prisma/client';
 import { Account } from 'src/shared/domain/account';
-import { InvalidParam } from 'src/shared/domain/invalidParam';
+import { InvalidCoditionException } from 'src/shared/exception/invalidCondition.exception';
 import { TransactionType } from 'src/shared/enum/transactionType.enum';
 import { ITransaction } from 'src/shared/interface/transaction.interface';
 import { AccountMapper } from 'src/shared/mapper/account.mapper';
@@ -112,9 +112,8 @@ export class AccountRepository {
         },
       });
       if (accountUpdated.balance.lessThan(0)) {
-        throw new InvalidParam(
-          'Balance',
-          'The balance is not sufficient enough!',
+        throw new InvalidCoditionException(
+          'The value required is greater than balance!!!',
         );
       }
       return true;

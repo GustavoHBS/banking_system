@@ -2,7 +2,7 @@ import { Decimal } from '@prisma/client/runtime';
 import { Cpf } from './cpf';
 import { Email } from './email';
 import { Entity } from './entity';
-import { InvalidParam } from './invalidParam';
+import { InvalidCoditionException } from '../exception/invalidCondition.exception';
 import { Password } from './password';
 
 interface IAccountProps {
@@ -20,22 +20,12 @@ export class Account extends Entity<IAccountProps> {
   }
 
   static create(account: IAccountProps): Account {
-    //const account = structuredClone(props);
     if (account.id) {
       return new Account(account);
     }
-    const email = Email.create(account.email);
-    const cpf = Cpf.create(account.cpf);
-    const password = Password.create(account.password);
-    if (email instanceof InvalidParam) {
-      throw new InvalidParam('email');
-    }
-    if (cpf instanceof InvalidParam) {
-      throw new InvalidParam('cpf');
-    }
-    account.email = email.getValue();
-    account.cpf = cpf.getValue();
-    account.password = password.getValue();
+    account.email = Email.create(account.email).getValue();
+    account.cpf = Cpf.create(account.cpf).getValue();
+    account.password = Password.create(account.password).getValue();
     return new Account(account);
   }
 
@@ -65,20 +55,17 @@ export class Account extends Entity<IAccountProps> {
 
   addBalance(value: number) {
     if (value <= 0) {
-      return new InvalidParam('balance');
+      throw new InvalidCoditionException('Value should be greater then 0');
     }
     this.props.balance = this.props.balance.add(value);
   }
 
   subBalance(value: number) {
     if (value <= 0) {
-      throw new InvalidParam('balance');
+      throw new InvalidCoditionException('Value should be greater then 0');
     }
     if (this.balance.lessThan(value)) {
-      throw new InvalidParam(
-        'balance',
-        'The Balance of account is not enough!',
-      );
+      throw new InvalidCoditionException('The value is greater than balance!');
     }
     this.props.balance = this.props.balance.sub(value);
     return true;

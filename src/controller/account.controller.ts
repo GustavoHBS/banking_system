@@ -3,16 +3,14 @@ import {
   Controller,
   Get,
   HttpStatus,
-  Param,
   Post,
   Put,
   Query,
   Res,
 } from '@nestjs/common';
-import { ApiBody, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { ApiBody, ApiQuery } from '@nestjs/swagger';
 import { Response } from 'express';
 import { CustomHttpError } from 'src/shared/domain/error';
-import { InvalidParam } from 'src/shared/domain/invalidParam';
 import { IAccountAndValue } from 'src/shared/interface/accountAndValue.interface';
 import { ITransfer } from 'src/shared/interface/transfer.interface';
 import { IUserData } from 'src/shared/interface/userData.interface';
@@ -103,24 +101,15 @@ export class AccountController {
     type: TransferDTO,
   })
   async transfer(@Body() transfer: ITransfer, @Res() response: Response) {
-    try {
-      const isSuccess = await this.transferUseCase.execute(transfer);
-      if (isSuccess) {
-        return response.status(HttpStatus.OK).send({
-          message: 'Transfer is success!',
-        });
-      }
-      return response.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
-        message: 'An error occurred while performing the transfer!',
+    const isSuccess = await this.transferUseCase.execute(transfer);
+    if (isSuccess) {
+      return response.status(HttpStatus.OK).send({
+        message: 'Transfer is success!',
       });
-    } catch (err) {
-      if (err instanceof InvalidParam) {
-        return response.status(err.status).send({
-          message: err.message,
-        });
-      }
-      return response.status(HttpStatus.INTERNAL_SERVER_ERROR).send('ERR');
     }
+    return response.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
+      message: 'An error occurred while performing the transfer!',
+    });
   }
 
   @Put('/withdrawn')
@@ -131,24 +120,14 @@ export class AccountController {
     @Body() withdrawnDto: IAccountAndValue,
     @Res() response: Response,
   ) {
-    try {
-      const isSuccess = await this.withdrawnUseCase.execute(withdrawnDto);
-      if (isSuccess) {
-        return response.status(HttpStatus.OK).send({
-          message: 'Withdrawn success!',
-        });
-      }
-      return response.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
-        message: 'An error occurred while performing the withdrawn!',
+    const isSuccess = await this.withdrawnUseCase.execute(withdrawnDto);
+    if (isSuccess) {
+      return response.status(HttpStatus.OK).send({
+        message: 'Withdrawn success!',
       });
-    } catch (err) {
-      console.log(err);
-      if (err instanceof InvalidParam) {
-        return response.status(err.status).send({
-          message: err.message,
-        });
-      }
-      return response.status(HttpStatus.INTERNAL_SERVER_ERROR).send('ERR');
     }
+    return response.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
+      message: 'An error occurred while performing the withdrawn!',
+    });
   }
 }

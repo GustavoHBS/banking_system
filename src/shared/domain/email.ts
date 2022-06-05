@@ -1,4 +1,4 @@
-import { InvalidParam } from './invalidParam';
+import { InvalidCoditionException } from '../exception/invalidCondition.exception';
 
 export class Email {
   private email: string;
@@ -7,9 +7,9 @@ export class Email {
     this.email = email;
   }
 
-  static create(email: string): Email | InvalidParam {
+  static create(email: string): Email {
     if (!email.includes('@')) {
-      return new InvalidParam('email');
+      throw new InvalidCoditionException('Email invalid!');
     }
     return new Email(email);
   }
