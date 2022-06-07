@@ -1,73 +1,21 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+<h1>Banking System API</h1>
+Está é uma aplicação para simular um sistema bancario, de forma mais simples. Ela é feita em node utilizando o framework nestJS e o Prisma como ORM.
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+<h2>Configuração</h2>
+O primeiro passo é ter o node instalado na maquina, de preferencia a ultima versão 18.0 e nesse tutorial utilizaremos o yarn, mas se quiser, você pode usar o npm.
+Apos isso basta clonar o repositorio na maquina e rodar o commando:
+<pre>yarn</pre>
+Esse comando instalara as dependencias necessárias para rodar o projeto, apos isso deve ser criado um arquivio chamado <b>.env</b> na raiz do projeto, ele terá as variaveis de ambiente que a aplicação utilizara, no caso são essas:
+<pre>
+DATABASE_URL=
+PRIVATE_KEY=
+PORT=
+</pre>
+O <b>DATABASE_URL</b> que será utilizado para guardar as configurações do banco, no caso nos estamos utilizando o postgresql, sendo assim o padrão para preencher esse campo é <pre>postgres://usuario:senha@endereço da base:porta/schema</pre>
+O <b>PRIVATE_KEY</b> é a chave que será utilizada pra encriptografar a senha da conta(no momento está senha não é utilizada pra nada).
+A <b>PORT</b> serve para você indicar em qual porta da sua maquina, a api ira utilizar para escutar as requisições, caso você não coloque nenhuma, será utilizada a porta 3000.
+<h3>Start</h3>
+Para iniciar o projeto é preciso buildar ele primeiro, sendo assim você pode apenas rodar um <pre>yarn build</pre> para buildar o projeto e logo depois um <pre>yarn start:prod</pre> ao fazer isso, ele criara um cliente do prisma, rodara as migrations para criar as tabelas do banco e startara a aplicação.(Caso você não queira fazer isso toda vez, basta rodar o <b> yarn start</b> que ele ira gerar o build e rodar a aplicação sozinho, sem precisar rodar as coisas do banco).
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Installation
-
-```bash
-$ npm install
-```
-
-## Running the app
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+<h2>Utilizado a aplicação</h2>
+Agora que a aplicação ja ta rodando, é hora de utiliza-la. Para isso acesse o <b>localhost:PORTA/api</b>, nesse link você encontrara as rotas da api, além de poder fazer a chamada delas diretamente por la. Mas caso você queira uma documentação mais bonita e legivel, você pode acessar o <b>localhost:PORTA/docs</b>, nesse link não será possivel fazer a chamada direta das rotas, mas você conseguira ler de uma maneira mais facil.
