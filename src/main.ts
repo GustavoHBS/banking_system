@@ -25,8 +25,8 @@ function addDoc(app: INestApplication) {
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const PORT = process.env.PORT || 3000;
+  app.useGlobalPipes(new ValidationPipe({}));
   app.useGlobalFilters(new ErrorExceptionFilter(), new HttpExceptionFilter());
-  app.useGlobalPipes(new ValidationPipe());
   await addDoc(app);
   await app.listen(PORT);
 }

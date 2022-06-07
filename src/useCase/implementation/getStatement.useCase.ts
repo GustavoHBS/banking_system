@@ -15,6 +15,9 @@ export class GetStatementUseCase implements IGetStatementUseCase {
   ) {}
 
   async execute(accountId: number): Promise<IStatement[]> {
+    if (!accountId) {
+      throw new InvalidCoditionException('AccountId was not informed!');
+    }
     const transactions = await this.accountRepository.getAccountTransactions(
       accountId,
     );

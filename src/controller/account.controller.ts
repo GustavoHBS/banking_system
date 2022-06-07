@@ -59,14 +59,12 @@ export class AccountController {
     description: 'Route to create a new account',
     summary: 'Create Account',
   })
-  @ApiBody({
-    type: CreateAccountDTO,
-  })
   @ApiResponse({
     status: HttpStatus.CREATED,
     type: CreateAccountResponseDTO,
   })
-  async create(@Body() userData: IUserData, @Res() response: Response) {
+  async create(@Body() userData: CreateAccountDTO, @Res() response: Response) {
+    console.log(userData);
     const account = await this.createAccountUseCase.execute(userData);
     return response.status(HttpStatus.CREATED).send({
       message: 'Account created with success!',
@@ -79,17 +77,11 @@ export class AccountController {
     description: 'Route to make a deposit in account',
     summary: 'Deposit',
   })
-  @ApiBody({
-    type: DepositDTO,
-  })
   @ApiResponse({
     status: HttpStatus.OK,
     type: DepositResponseDTO,
   })
-  async deposit(
-    @Body() depositValue: IAccountAndValue,
-    @Res() response: Response,
-  ) {
+  async deposit(@Body() depositValue: DepositDTO, @Res() response: Response) {
     const newBalance = await this.depositUseCase.execute(depositValue);
     return response.status(HttpStatus.OK).send({
       message: 'Deposit made successfully!',
@@ -149,14 +141,11 @@ export class AccountController {
     description: 'Route to transfer money between account',
     summary: 'Transfer money',
   })
-  @ApiBody({
-    type: TransferDTO,
-  })
   @ApiResponse({
     status: HttpStatus.OK,
     type: transferResponseDTO,
   })
-  async transfer(@Body() transfer: ITransfer, @Res() response: Response) {
+  async transfer(@Body() transfer: TransferDTO, @Res() response: Response) {
     await this.transferUseCase.execute(transfer);
     return response.status(HttpStatus.OK).send({
       message: 'Transfer has been success!',
@@ -168,18 +157,15 @@ export class AccountController {
     description: 'Route to withdrawn money of account',
     summary: 'Withdrawn',
   })
-  @ApiBody({
-    type: WithdrawnDTO,
-  })
   @ApiResponse({
     status: HttpStatus.OK,
     type: WithdrawnResponseDTO,
   })
   async withdrawn(
-    @Body() withdrawnDto: IAccountAndValue,
+    @Body() withdrawnDTO: WithdrawnDTO,
     @Res() response: Response,
   ) {
-    const newBalance = await this.withdrawnUseCase.execute(withdrawnDto);
+    const newBalance = await this.withdrawnUseCase.execute(withdrawnDTO);
     return response.status(HttpStatus.OK).send({
       message: 'Withdrawn success!',
       newBalance,

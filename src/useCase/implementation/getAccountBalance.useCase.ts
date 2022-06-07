@@ -12,6 +12,9 @@ export class GetAccountBalanceUseCase implements IGetAccountBalanceUseCase {
   ) {}
 
   async execute(accountIdReq: string): Promise<number> {
+    if (!accountIdReq) {
+      throw new InvalidCoditionException('AccountId was not informed');
+    }
     const accountId = parseInt(accountIdReq);
     const account = await this.getAccount(accountId);
     return account.balance.toNumber();
