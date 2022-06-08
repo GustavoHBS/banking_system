@@ -7,6 +7,8 @@ import { account } from '@prisma/client';
 import { TransactionType } from 'src/shared/enum/transactionType.enum';
 import { IDepositUseCase } from '../depositUseCase.interface';
 import { IAccountRepository } from 'src/repository/accountRepository.interface';
+import { Console } from 'console';
+import { Account } from 'src/shared/domain/account';
 
 @Injectable()
 export class DepositUseCase implements IDepositUseCase {
@@ -31,8 +33,7 @@ export class DepositUseCase implements IDepositUseCase {
     return accountResult;
   }
 
-  private async addBalanceInAccount(accountData: account, value: number) {
-    const account = AccountMapper.toDomain(accountData);
+  private async addBalanceInAccount(account: Account, value: number) {
     account.addBalance(value);
     return this.accountRepository
       .update(AccountMapper.toEntity(account))

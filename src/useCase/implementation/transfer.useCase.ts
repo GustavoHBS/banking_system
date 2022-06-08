@@ -17,10 +17,10 @@ export class TransferUseCase implements ITransferUseCase {
 
   async execute(transferProps: ITransfer): Promise<boolean> {
     const { value } = transferProps;
-    const senderAccount = await this.getAccount(transferProps.senderId);
-    const receiverAccount = await this.getAccount(transferProps.receiverId);
-    const sender = this.removeValueOfSender(senderAccount, value);
-    const receiver = this.addBalanceInReceiver(receiverAccount, value);
+    const sender = await this.getAccount(transferProps.senderId);
+    const receiver = await this.getAccount(transferProps.receiverId);
+    sender.subBalance(value);
+    receiver.addBalance(value);
     return this.accountRepository
       .saveTransfer(
         AccountMapper.toEntity(sender),
@@ -42,17 +42,5 @@ export class TransferUseCase implements ITransferUseCase {
       throw new HttpException('Account not found', HttpStatus.BAD_REQUEST);
     }
     return accountResult;
-  }
-
-  private removeValueOfSender(accountData: account, value: number): Account {
-    const account = AccountMapper.toDomain(accountData);
-    account.subBalance(value);
-    return account;
-  }
-
-  private addBalanceInReceiver(accountData: account, value: number): Account {
-    const account = AccountMapper.toDomain(accountData);
-    account.addBalance(value);
-    return account;
   }
 }

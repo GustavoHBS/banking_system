@@ -7,6 +7,7 @@ import { ITransaction } from 'src/shared/interface/transaction.interface';
 import { AccountMapper } from 'src/shared/mapper/account.mapper';
 import { Decimal } from '@prisma/client/runtime';
 import { IAccountRepository } from '../accountRepository.interface';
+import { ServerException } from 'src/shared/exception/ServerException';
 
 @Injectable()
 export class AccountRepository implements IAccountRepository {
@@ -14,12 +15,24 @@ export class AccountRepository implements IAccountRepository {
   constructor() {
     this.repository = new PrismaClient();
   }
-  async create(account: IAccount): Promise<Account> {
+  async create(account: IAccount): Promise<Account | never> {
     return this.repository.account
       .create({
         data: account,
       })
-      .then(AccountMapper.toDomain);
+      .then(AccountMapper.toDomain)
+      .catch((err) => {
+        if (err.meta?.target?.length) {
+          const errorField = err.meta?.target[0];
+          throw new InvalidCoditionException(
+            `The ${errorField} must be unique, exist another account with this ${errorField}`,
+          );
+        }
+        throw new ServerException(
+          'There was an error creating an account',
+          err,
+        );
+      });
   }
 
   findById(id: number): Promise<Account | null> {
