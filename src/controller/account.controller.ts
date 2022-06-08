@@ -64,7 +64,6 @@ export class AccountController {
     type: CreateAccountResponseDTO,
   })
   async create(@Body() userData: CreateAccountDTO, @Res() response: Response) {
-    console.log(userData);
     const account = await this.createAccountUseCase.execute(userData);
     return response.status(HttpStatus.CREATED).send({
       message: 'Account created with success!',
