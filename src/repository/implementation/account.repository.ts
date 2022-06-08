@@ -8,12 +8,13 @@ import { AccountMapper } from 'src/shared/mapper/account.mapper';
 import { Decimal } from '@prisma/client/runtime';
 import { IAccountRepository } from '../accountRepository.interface';
 import { ServerException } from 'src/shared/exception/ServerException';
+import { PrismaService } from 'src/service/prisma.service';
 
 @Injectable()
 export class AccountRepository implements IAccountRepository {
   private repository: PrismaClient;
-  constructor() {
-    this.repository = new PrismaClient();
+  constructor(private db: PrismaService) {
+    this.repository = db;
   }
   async create(account: IAccount): Promise<Account | never> {
     return this.repository.account

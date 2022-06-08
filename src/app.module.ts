@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AccountController } from './controller/account.controller';
 import { AccountRepository } from './repository/implementation/account.repository';
+import { PrismaService } from './service/prisma.service';
 import { CreateAccountUseCase } from './useCase/implementation/createAccount.useCase';
 import { DepositUseCase } from './useCase/implementation/deposit.useCase';
 import { GetAccountBalanceUseCase } from './useCase/implementation/getAccountBalance.useCase';
@@ -19,6 +20,7 @@ import { WithdrawnUseCase } from './useCase/implementation/withdrawn.useCase';
     GetStatementUseCase,
     TransferUseCase,
     WithdrawnUseCase,
+    PrismaService,
   ],
 })
 export class AppModule {}

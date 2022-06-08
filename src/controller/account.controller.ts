@@ -9,11 +9,8 @@ import {
   Query,
   Res,
 } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { Response } from 'express';
-import { IAccountAndValue } from 'src/shared/interface/accountAndValue.interface';
-import { ITransfer } from 'src/shared/interface/transfer.interface';
-import { IUserData } from 'src/shared/interface/userData.interface';
 import { ICreateAccountUseCase } from 'src/useCase/createAccountUseCase.interface';
 import { IDepositUseCase } from 'src/useCase/depositUseCase.interface';
 import { IGetAccountBalanceUseCase } from 'src/useCase/getAccountBalanceUseCase.interface';
